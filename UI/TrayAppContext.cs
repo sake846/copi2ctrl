@@ -121,7 +121,7 @@ public class TrayAppContext : ApplicationContext
         _trayIcon.Text = $"Copi2Ctrl: {statusText}";
 
         var oldIcon = _trayIcon.Icon;
-        _trayIcon.Icon = IconHelper.CreateAppIcon(_settings.Enabled);
+        _trayIcon.Icon = IconHelper.GetAppIcon(_settings.Enabled);
         oldIcon?.Dispose();
     }
 

@@ -26,6 +26,14 @@ internal static class Program
         bool showHelp = args.Contains("--help") || args.Contains("-h");
         bool consoleMode = args.Contains("--console") || args.Contains("--debug");
         bool openMonitor = args.Contains("--monitor") || args.Contains("-m");
+        bool generateIcon = args.Contains("--generate-icon");
+
+        if (generateIcon)
+        {
+            IconGenerator.GenerateIcoFile("app.ico");
+            Console.WriteLine("app.ico was successfully generated!");
+            return;
+        }
 
         if (showHelp)
         {

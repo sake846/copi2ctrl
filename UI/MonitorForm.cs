@@ -38,6 +38,7 @@ public class MonitorForm : Form
         StartPosition = FormStartPosition.CenterScreen;
         Font = new Font("Yu Gothic UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
         BackColor = Color.FromArgb(245, 246, 248);
+        Icon = IconHelper.GetAppIcon(true);
 
         // トップパネル (設定コントロール)
         var topPanel = new Panel
