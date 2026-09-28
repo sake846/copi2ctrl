@@ -80,19 +80,6 @@ public class TrayAppContext : ApplicationContext
 
         menu.Items.Add(new ToolStripSeparator());
 
-        var menuAbout = new ToolStripMenuItem("バージョン情報 (&A)...", null, (s, e) =>
-        {
-            MessageBox.Show(
-                "Copi2Ctrl v1.0.0\n\n" +
-                "ノートPCのCopilotキー (Win+Shift+F23) をCtrlキーに置き換える常駐ツールです。\n" +
-                "C# .NET 10 環境で動作します。\n\n" +
-                "Copilot + C, Copilot + V などのショートカット操作を通常のCtrlキーと同様に実行できます。",
-                "Copi2Ctrl について",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-        });
-        menu.Items.Add(menuAbout);
-
         var menuExit = new ToolStripMenuItem("終了 (&X)", null, (s, e) =>
         {
             ExitThread();
