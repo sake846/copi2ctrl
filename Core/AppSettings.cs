@@ -11,11 +11,15 @@ public enum TargetControlKey
 
 public class AppSettings
 {
-    private static readonly string ConfigDir = Path.Combine(
+    private static readonly string LocalConfigDir = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "Copi2Ctrl");
+
+    private static readonly string RoamingConfigDir = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Copi2Ctrl");
 
-    private static readonly string ConfigPath = Path.Combine(ConfigDir, "settings.json");
+    private static readonly string ConfigPath = Path.Combine(LocalConfigDir, "settings.json");
     private const string StartupRegistryKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
     private const string AppName = "Copi2Ctrl";
 
@@ -28,6 +32,29 @@ public class AppSettings
     {
         try
         {
+            // 旧 Roaming からの自動移行
+            var roamingConfigPath = Path.Combine(RoamingConfigDir, "settings.json");
+            if (!File.Exists(ConfigPath) && File.Exists(roamingConfigPath))
+            {
+                try
+                {
+                    if (!Directory.Exists(LocalConfigDir))
+                    {
+                        Directory.CreateDirectory(LocalConfigDir);
+                    }
+                    File.Copy(roamingConfigPath, ConfigPath, true);
+                    File.Delete(roamingConfigPath);
+                    if (Directory.Exists(RoamingConfigDir) && !Directory.EnumerateFileSystemEntries(RoamingConfigDir).Any())
+                    {
+                        Directory.Delete(RoamingConfigDir);
+                    }
+                }
+                catch
+                {
+                    // 移行エラーは無視
+                }
+            }
+
             if (File.Exists(ConfigPath))
             {
                 var json = File.ReadAllText(ConfigPath);
@@ -55,9 +82,9 @@ public class AppSettings
     {
         try
         {
-            if (!Directory.Exists(ConfigDir))
+            if (!Directory.Exists(LocalConfigDir))
             {
-                Directory.CreateDirectory(ConfigDir);
+                Directory.CreateDirectory(LocalConfigDir);
             }
 
             var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
