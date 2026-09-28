@@ -68,18 +68,18 @@ public static class IconGenerator
                     g.FillPath(highlightBrush, highlightPath);
                 }
 
-                // スパークル (Copilot / AI の象徴の四芒星)
-                DrawSparkle(g, size);
+                // Copilot のリボンロゴアクセント
+                DrawCopilotMark(g, size);
 
                 // "Ctrl" の文字
                 string text = size <= 20 ? "C" : "Ctrl";
                 float fontSize = size switch
                 {
-                    >= 256 => 82f,
-                    >= 128 => 42f,
-                    >= 64 => 21f,
-                    >= 48 => 15.5f,
-                    >= 32 => 10.5f,
+                    >= 256 => 78f,
+                    >= 128 => 40f,
+                    >= 64 => 20f,
+                    >= 48 => 15f,
+                    >= 32 => 10f,
                     _ => 8.5f
                 };
 
@@ -146,34 +146,76 @@ public static class IconGenerator
         }
     }
 
-    private static void DrawSparkle(Graphics g, int size)
+    private static void DrawCopilotMark(Graphics g, int size)
     {
         if (size < 32) return;
 
-        float cx = size * 0.78f;
-        float cy = size * 0.24f;
-        float r = size * 0.14f;
-        float inner = r * 0.28f;
+        var state = g.Save();
 
-        using var path = new GraphicsPath();
-        path.AddPolygon(new[]
+        // 右上に配置 (Copilot の交差リボン)
+        float scale = size / 256.0f;
+        float tx = size * 0.62f;
+        float ty = size * 0.12f;
+        g.TranslateTransform(tx, ty);
+        g.ScaleTransform(scale, scale);
+
+        // 左側ループ: シアン〜ブルー〜ティール (Copilotカラー)
+        using (var pathLeft = new GraphicsPath())
         {
-            new PointF(cx, cy - r),
-            new PointF(cx + inner, cy - inner),
-            new PointF(cx + r, cy),
-            new PointF(cx + inner, cy + inner),
-            new PointF(cx, cy + r),
-            new PointF(cx - inner, cy + inner),
-            new PointF(cx - r, cy),
-            new PointF(cx - inner, cy - inner),
-        });
+            pathLeft.AddBezier(
+                new PointF(22, 60),
+                new PointF(6, 46),
+                new PointF(6, 20),
+                new PointF(26, 12));
+            pathLeft.AddBezier(
+                new PointF(26, 12),
+                new PointF(42, 6),
+                new PointF(54, 20),
+                new PointF(44, 38));
 
-        using var brush = new LinearGradientBrush(
-            new PointF(cx - r, cy - r),
-            new PointF(cx + r, cy + r),
-            Color.FromArgb(255, 56, 189, 248),  // cyan-400
-            Color.FromArgb(255, 236, 72, 153)); // pink-500
-        g.FillPath(brush, path);
+            using var brushLeft = new LinearGradientBrush(
+                new PointF(6, 12), new PointF(54, 60),
+                Color.FromArgb(255, 0, 210, 180),   // Copilot ティール/シアン
+                Color.FromArgb(255, 0, 120, 215));  // Copilot ブルー
+
+            using var penLeft = new Pen(brushLeft, 14f)
+            {
+                StartCap = LineCap.Round,
+                EndCap = LineCap.Round,
+                LineJoin = LineJoin.Round
+            };
+            g.DrawPath(penLeft, pathLeft);
+        }
+
+        // 右側ループ: コーラルピンク〜オレンジ〜アンバー (Copilotカラー)
+        using (var pathRight = new GraphicsPath())
+        {
+            pathRight.AddBezier(
+                new PointF(46, 8),
+                new PointF(62, 22),
+                new PointF(62, 48),
+                new PointF(42, 56));
+            pathRight.AddBezier(
+                new PointF(42, 56),
+                new PointF(26, 62),
+                new PointF(14, 48),
+                new PointF(24, 30));
+
+            using var brushRight = new LinearGradientBrush(
+                new PointF(14, 8), new PointF(62, 56),
+                Color.FromArgb(255, 255, 140, 0),   // Copilot オレンジ/アンバー
+                Color.FromArgb(255, 240, 60, 110)); // Copilot コーラルピンク
+
+            using var penRight = new Pen(brushRight, 14f)
+            {
+                StartCap = LineCap.Round,
+                EndCap = LineCap.Round,
+                LineJoin = LineJoin.Round
+            };
+            g.DrawPath(penRight, pathRight);
+        }
+
+        g.Restore(state);
     }
 
     private static GraphicsPath CreateRoundedRectangle(float x, float y, float width, float height, float radius)
