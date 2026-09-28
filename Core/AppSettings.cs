@@ -20,7 +20,7 @@ public class AppSettings
     private const string AppName = "Copi2Ctrl";
 
     public bool Enabled { get; set; } = true;
-    public TargetControlKey TargetKey { get; set; } = TargetControlKey.LeftControl;
+    public TargetControlKey TargetKey { get; set; } = TargetControlKey.RightControl;
     public bool RunAtStartup { get; set; } = false;
     public bool LogToConsole { get; set; } = false;
 

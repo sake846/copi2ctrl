@@ -69,8 +69,8 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 - **右クリックメニュー**:
   - **有効 (E)**: リマップの有効/無効をワンクリックで切り替えます（無効時はアイコンがグレーになります）。
   - **置き換え先キー (T)**:
-    - `左Ctrl (Left Control)`（デフォルト）
-    - `右Ctrl (Right Control)`
+    - `右Ctrl (Right Control)`（デフォルト）
+    - `左Ctrl (Left Control)`
   - **キー監視・テスト画面を開く (M)**:
     - リアルタイムログとテスト入力ボックスを備えた診断ウィンドウを表示します。
   - **Windows起動時に自動実行 (S)**:
