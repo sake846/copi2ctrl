@@ -21,7 +21,7 @@ public class TrayAppContext : ApplicationContext
 
         _trayIcon = new NotifyIcon
         {
-            Text = "Copi2Ctrl - Copilot -> Ctrl 変換",
+            Text = "Copi2Ctrl - Copilot → Ctrl 変換",
             Visible = true,
             ContextMenuStrip = CreateContextMenu()
         };
@@ -35,6 +35,7 @@ public class TrayAppContext : ApplicationContext
     {
         var menu = new ContextMenuStrip();
 
+        // --- Group 1: Remapping state ---
         _menuEnabled = new ToolStripMenuItem("有効 (&E)", null, (s, e) =>
         {
             _settings.Enabled = !_settings.Enabled;
@@ -46,12 +47,12 @@ public class TrayAppContext : ApplicationContext
         };
         menu.Items.Add(_menuEnabled);
 
-        var targetMenu = new ToolStripMenuItem("置き換え先キー (&T)");
-        _menuLeftCtrl = new ToolStripMenuItem("左Ctrl (Left Control)", null, (s, e) =>
+        var targetMenu = new ToolStripMenuItem("変換先キー (&T)");
+        _menuLeftCtrl = new ToolStripMenuItem("左 Ctrl (Left Control)", null, (s, e) =>
         {
             SetTargetKey(TargetControlKey.LeftControl);
         });
-        _menuRightCtrl = new ToolStripMenuItem("右Ctrl (Right Control)", null, (s, e) =>
+        _menuRightCtrl = new ToolStripMenuItem("右 Ctrl (Right Control)", null, (s, e) =>
         {
             SetTargetKey(TargetControlKey.RightControl);
         });
@@ -61,13 +62,14 @@ public class TrayAppContext : ApplicationContext
 
         menu.Items.Add(new ToolStripSeparator());
 
+        // --- Group 2: App operations ---
         var menuMonitor = new ToolStripMenuItem("キー監視・テスト画面を開く (&M)...", null, (s, e) =>
         {
             ShowMonitorWindow();
         });
         menu.Items.Add(menuMonitor);
 
-        _menuStartup = new ToolStripMenuItem("Windows起動時に自動実行 (&S)", null, (s, e) =>
+        _menuStartup = new ToolStripMenuItem("Windows 起動時に実行 (&S)", null, (s, e) =>
         {
             var newState = !_menuStartup.Checked;
             _settings.SetStartup(newState);
@@ -78,8 +80,16 @@ public class TrayAppContext : ApplicationContext
         };
         menu.Items.Add(_menuStartup);
 
+        var menuAbout = new ToolStripMenuItem("Copi2Ctrl について (&A)...", null, (s, e) =>
+        {
+            using var dlg = new AboutForm();
+            dlg.ShowDialog();
+        });
+        menu.Items.Add(menuAbout);
+
         menu.Items.Add(new ToolStripSeparator());
 
+        // --- Group 3: Exit ---
         var menuExit = new ToolStripMenuItem("終了 (&X)", null, (s, e) =>
         {
             ExitThread();
@@ -103,7 +113,7 @@ public class TrayAppContext : ApplicationContext
         _menuRightCtrl.Checked = _settings.TargetKey == TargetControlKey.RightControl;
         _menuStartup.Checked = _settings.RunAtStartup;
 
-        var targetText = _settings.TargetKey == TargetControlKey.LeftControl ? "左Ctrl" : "右Ctrl";
+        var targetText = _settings.TargetKey == TargetControlKey.LeftControl ? "左 Ctrl" : "右 Ctrl";
         var statusText = _settings.Enabled ? $"有効 ({targetText})" : "一時停止中";
         _trayIcon.Text = $"Copi2Ctrl: {statusText}";
 

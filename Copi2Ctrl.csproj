@@ -12,4 +12,10 @@
     <Description>Remap Copilot key to Ctrl key for Windows laptops</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="version.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
