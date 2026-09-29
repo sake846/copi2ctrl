@@ -1,6 +1,5 @@
 using System.Drawing;
 using System.IO;
-using System.Reflection;
 
 namespace Copi2Ctrl.UI;
 
@@ -52,22 +51,7 @@ public static class UiTokens
     {
         try
         {
-            // 実行中アセンブリのディレクトリ（通常ビルドやテスト時）
-            string? assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (!string.IsNullOrEmpty(assemblyDir))
-            {
-                string file = Path.Combine(assemblyDir, "version.txt");
-                if (File.Exists(file))
-                {
-                    string raw = File.ReadAllText(file).Trim();
-                    if (!string.IsNullOrEmpty(raw))
-                    {
-                        return raw;
-                    }
-                }
-            }
-
-            // AppContext.BaseDirectory（単一ファイル発行時など）
+            // AppContext.BaseDirectory（通常ビルドおよび単一ファイル発行時共通）
             string baseDir = AppContext.BaseDirectory;
             if (!string.IsNullOrEmpty(baseDir))
             {
