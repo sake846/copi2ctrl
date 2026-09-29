@@ -26,6 +26,7 @@ internal static class Program
         bool showHelp = args.Contains("--help") || args.Contains("-h");
         bool consoleMode = args.Contains("--console") || args.Contains("--debug");
         bool openMonitor = args.Contains("--monitor") || args.Contains("-m");
+        bool openSettings = args.Contains("--settings") || args.Contains("-s");
         bool generateIcon = args.Contains("--generate-icon");
 
         if (generateIcon)
@@ -40,10 +41,11 @@ internal static class Program
             bool attached = InitConsoleOutput();
             string helpText = "Copi2Ctrl - Copilotキー to Ctrlキー 置き換えツール (.NET 10)\n\n" +
                               "使用方法: Copi2Ctrl.exe [オプション]\n" +
-                              "  (引数なし)    タスクトレイに常駐してバックグラウンド実行\n" +
-                              "  --monitor, -m 起動時にキー監視・診断ウィンドウを表示\n" +
-                              "  --console     コンソールにキーログを出力するデバッグモード\n" +
-                              "  --help, -h    このヘルプを表示";
+                              "  (引数なし)     タスクトレイに常駐してバックグラウンド実行\n" +
+                              "  --monitor, -m  起動時にキー監視・診断ウィンドウを表示\n" +
+                              "  --settings, -s 起動時に設定ウィンドウを表示\n" +
+                              "  --console      コンソールにキーログを出力するデバッグモード\n" +
+                              "  --help, -h     このヘルプを表示";
 
             if (attached)
             {
@@ -91,6 +93,10 @@ internal static class Program
         if (openMonitor)
         {
             trayContext.ShowMonitorWindow();
+        }
+        else if (openSettings)
+        {
+            trayContext.ShowSettingsWindow();
         }
 
         Application.Run(trayContext);

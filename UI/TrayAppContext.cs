@@ -9,6 +9,8 @@ public class TrayAppContext : ApplicationContext
     private readonly NotifyIcon _trayIcon;
 
     private MonitorForm? _monitorForm;
+    private SettingsForm? _settingsForm;
+
     private ToolStripMenuItem _menuEnabled = null!;
     private ToolStripMenuItem _menuLeftCtrl = null!;
     private ToolStripMenuItem _menuRightCtrl = null!;
@@ -35,7 +37,7 @@ public class TrayAppContext : ApplicationContext
     {
         var menu = new ContextMenuStrip();
 
-        // --- Group 1: Remapping state ---
+        // --- Group 1: 変換動作設定 ---
         _menuEnabled = new ToolStripMenuItem("有効 (&E)", null, (s, e) =>
         {
             _settings.Enabled = !_settings.Enabled;
@@ -62,14 +64,20 @@ public class TrayAppContext : ApplicationContext
 
         menu.Items.Add(new ToolStripSeparator());
 
-        // --- Group 2: App operations ---
-        var menuMonitor = new ToolStripMenuItem("キー監視・テスト画面を開く (&M)...", null, (s, e) =>
+        // --- Group 2: アプリ操作・診断 ---
+        var menuMonitor = new ToolStripMenuItem("キー監視・診断を開く (&M)...", null, (s, e) =>
         {
             ShowMonitorWindow();
         });
         menu.Items.Add(menuMonitor);
 
-        _menuStartup = new ToolStripMenuItem("Windows 起動時に実行 (&S)", null, (s, e) =>
+        var menuSettings = new ToolStripMenuItem("設定 (&S)...", null, (s, e) =>
+        {
+            ShowSettingsWindow();
+        });
+        menu.Items.Add(menuSettings);
+
+        _menuStartup = new ToolStripMenuItem("Windows 起動時に実行", null, (s, e) =>
         {
             var newState = !_menuStartup.Checked;
             _settings.SetStartup(newState);
@@ -80,6 +88,9 @@ public class TrayAppContext : ApplicationContext
         };
         menu.Items.Add(_menuStartup);
 
+        menu.Items.Add(new ToolStripSeparator());
+
+        // --- Group 3: アプリ情報・終了 ---
         var menuAbout = new ToolStripMenuItem("Copi2Ctrl について (&A)...", null, (s, e) =>
         {
             using var dlg = new AboutForm();
@@ -87,9 +98,6 @@ public class TrayAppContext : ApplicationContext
         });
         menu.Items.Add(menuAbout);
 
-        menu.Items.Add(new ToolStripSeparator());
-
-        // --- Group 3: Exit ---
         var menuExit = new ToolStripMenuItem("終了 (&X)", null, (s, e) =>
         {
             ExitThread();
@@ -106,7 +114,7 @@ public class TrayAppContext : ApplicationContext
         UpdateIconAndState();
     }
 
-    private void UpdateIconAndState()
+    public void UpdateIconAndState()
     {
         _menuEnabled.Checked = _settings.Enabled;
         _menuLeftCtrl.Checked = _settings.TargetKey == TargetControlKey.LeftControl;
@@ -120,6 +128,27 @@ public class TrayAppContext : ApplicationContext
         var oldIcon = _trayIcon.Icon;
         _trayIcon.Icon = IconHelper.GetAppIcon(_settings.Enabled);
         oldIcon?.Dispose();
+
+        if (_monitorForm != null && !_monitorForm.IsDisposed)
+        {
+            _monitorForm.UpdateUiState(MonitorUiState.Idle);
+        }
+    }
+
+    public void ShowSettingsWindow()
+    {
+        if (_settingsForm == null || _settingsForm.IsDisposed)
+        {
+            _settingsForm = new SettingsForm(_settings);
+            _settingsForm.FormClosed += (s, e) => UpdateIconAndState();
+            _settingsForm.Show();
+        }
+        else
+        {
+            _settingsForm.WindowState = FormWindowState.Normal;
+            _settingsForm.BringToFront();
+            _settingsForm.Activate();
+        }
     }
 
     public void ShowMonitorWindow()
@@ -146,6 +175,7 @@ public class TrayAppContext : ApplicationContext
             _trayIcon.Icon?.Dispose();
             _trayIcon.Dispose();
             _monitorForm?.Dispose();
+            _settingsForm?.Dispose();
             _remapper.Dispose();
         }
         base.Dispose(disposing);

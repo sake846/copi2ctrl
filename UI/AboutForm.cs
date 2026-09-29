@@ -1,85 +1,89 @@
-using System.IO;
-using System.Reflection;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Copi2Ctrl.UI;
 
 /// <summary>
-/// "About Copi2Ctrl" dialog: shows product name and version read from version.txt.
+/// "Copi2Ctrl について" ダイアログ: 製品名と version.txt から読み込んだバージョンを表示します。
 /// </summary>
-internal sealed class AboutForm : Form
+public sealed class AboutForm : Form
 {
     public AboutForm()
     {
-        Text = "Copi2Ctrl — About";
-        ClientSize = new System.Drawing.Size(360, 180);
+        Text = "Copi2Ctrl — このアプリについて";
+        ClientSize = new Size(380, 200);
+        MinimumSize = new Size(320, 180);
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         MinimizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
         ShowInTaskbar = false;
-        Font = new System.Drawing.Font("Segoe UI", 9F);
-        BackColor = System.Drawing.SystemColors.Window;
+        Font = UiTokens.FontBody;
+        BackColor = UiTokens.Surface;
 
-        // Header panel
+        // ===== Header panel =====
         var header = new Panel
         {
             Dock = DockStyle.Top,
-            Height = 60,
-            BackColor = System.Drawing.SystemColors.Control,
-            Padding = new Padding(16, 10, 16, 10)
+            Height = 64,
+            BackColor = UiTokens.SurfaceAlt,
+            Padding = new Padding(UiTokens.Space4, UiTokens.Space3, UiTokens.Space4, UiTokens.Space3)
         };
         var lblTitle = new Label
         {
             Text = "Copi2Ctrl",
-            Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold),
+            Font = UiTokens.FontTitle,
+            ForeColor = UiTokens.Text,
             AutoSize = true,
-            Location = new System.Drawing.Point(16, 12)
+            Location = new Point(UiTokens.Space4, UiTokens.Space3)
         };
         var lblDesc = new Label
         {
-            Text = "Copilot key → Ctrl key remapper",
-            Font = new System.Drawing.Font("Segoe UI", 8.5F),
-            ForeColor = System.Drawing.SystemColors.GrayText,
+            Text = "Copilotキーを Ctrlキーに変換する常駐ツール",
+            Font = UiTokens.FontCaption,
+            ForeColor = UiTokens.TextMuted,
             AutoSize = true,
-            Location = new System.Drawing.Point(16, 38)
+            Location = new Point(UiTokens.Space4, 38)
         };
         header.Controls.Add(lblTitle);
         header.Controls.Add(lblDesc);
 
-        // Content
+        // ===== Content =====
         var content = new Panel
         {
             Dock = DockStyle.Fill,
-            Padding = new Padding(16, 12, 16, 0)
+            Padding = new Padding(UiTokens.Space4, UiTokens.Space4, UiTokens.Space4, UiTokens.Space2)
         };
-        var version = ReadVersion();
+        var version = UiTokens.ReadVersion();
         var lblVersion = new Label
         {
             Text = $"バージョン / Version:  {version}",
-            Font = new System.Drawing.Font("Segoe UI", 9F),
+            Font = UiTokens.FontBody,
+            ForeColor = UiTokens.Text,
             AutoSize = true,
-            Location = new System.Drawing.Point(16, 16)
+            Location = new Point(UiTokens.Space4, UiTokens.Space4)
         };
         content.Controls.Add(lblVersion);
 
-        // Footer
+        // ===== Footer =====
         var footer = new Panel
         {
             Dock = DockStyle.Bottom,
             Height = 48,
-            BackColor = System.Drawing.SystemColors.Control,
-            Padding = new Padding(8)
+            BackColor = UiTokens.SurfaceAlt,
+            Padding = new Padding(UiTokens.Space2)
         };
         var btnOk = new Button
         {
-            Text = "OK",
+            Text = "閉じる",
             DialogResult = DialogResult.OK,
-            Size = new System.Drawing.Size(80, 30),
+            Size = new Size(UiTokens.ButtonMinWidth, UiTokens.ButtonHeight),
             Anchor = AnchorStyles.Right | AnchorStyles.Top
         };
-        btnOk.Location = new System.Drawing.Point(footer.ClientSize.Width - 96, 9);
-        btnOk.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+        UiTokens.ApplyPrimaryButtonStyle(btnOk);
+        btnOk.Location = new Point(footer.ClientSize.Width - UiTokens.ButtonMinWidth - UiTokens.Space4, (footer.ClientSize.Height - UiTokens.ButtonHeight) / 2);
+        btnOk.AccessibleName = "閉じる";
+        btnOk.AccessibleRole = AccessibleRole.PushButton;
         footer.Controls.Add(btnOk);
 
         Controls.Add(content);
@@ -88,22 +92,5 @@ internal sealed class AboutForm : Form
 
         AcceptButton = btnOk;
         CancelButton = btnOk;
-    }
-
-    private static string ReadVersion()
-    {
-        try
-        {
-            string? dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (dir == null) return "不明 / Unknown";
-            string file = Path.Combine(dir, "version.txt");
-            if (!File.Exists(file)) return "不明 / Unknown";
-            string raw = File.ReadAllText(file).Trim();
-            return string.IsNullOrEmpty(raw) ? "不明 / Unknown" : raw;
-        }
-        catch
-        {
-            return "不明 / Unknown";
-        }
     }
 }
