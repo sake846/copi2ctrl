@@ -37,7 +37,18 @@ public class TrayAppContext : ApplicationContext
     {
         var menu = new ContextMenuStrip();
 
-        // --- Group 1: 変換動作設定 ---
+        // --- Group 1: ダブルクリックと同じ主操作 ---
+        var menuMonitor = new ToolStripMenuItem("キー監視・診断を開く (&M)...", null, (s, e) =>
+        {
+            ShowMonitorWindow();
+        })
+        {
+            Font = new Font(menu.Font, FontStyle.Bold)
+        };
+        menu.Items.Add(menuMonitor);
+        menu.Items.Add(new ToolStripSeparator());
+
+        // --- Group 2: 変換動作と自動起動 ---
         _menuEnabled = new ToolStripMenuItem("有効 (&E)", null, (s, e) =>
         {
             _settings.Enabled = !_settings.Enabled;
@@ -62,21 +73,6 @@ public class TrayAppContext : ApplicationContext
         targetMenu.DropDownItems.Add(_menuRightCtrl);
         menu.Items.Add(targetMenu);
 
-        menu.Items.Add(new ToolStripSeparator());
-
-        // --- Group 2: アプリ操作・診断 ---
-        var menuMonitor = new ToolStripMenuItem("キー監視・診断を開く (&M)...", null, (s, e) =>
-        {
-            ShowMonitorWindow();
-        });
-        menu.Items.Add(menuMonitor);
-
-        var menuSettings = new ToolStripMenuItem("設定 (&S)...", null, (s, e) =>
-        {
-            ShowSettingsWindow();
-        });
-        menu.Items.Add(menuSettings);
-
         _menuStartup = new ToolStripMenuItem("Windows 起動時に実行", null, (s, e) =>
         {
             var newState = !_menuStartup.Checked;
@@ -90,13 +86,21 @@ public class TrayAppContext : ApplicationContext
 
         menu.Items.Add(new ToolStripSeparator());
 
-        // --- Group 3: アプリ情報・終了 ---
+        // --- Group 3: 設定とアプリ情報 ---
+        var menuSettings = new ToolStripMenuItem("設定 (&S)...", null, (s, e) =>
+        {
+            ShowSettingsWindow();
+        });
+        menu.Items.Add(menuSettings);
+
         var menuAbout = new ToolStripMenuItem("Copi2Ctrl について (&A)...", null, (s, e) =>
         {
             using var dlg = new AboutForm();
             dlg.ShowDialog();
         });
         menu.Items.Add(menuAbout);
+
+        menu.Items.Add(new ToolStripSeparator());
 
         var menuExit = new ToolStripMenuItem("終了 (&X)", null, (s, e) =>
         {
