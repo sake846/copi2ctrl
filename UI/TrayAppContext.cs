@@ -37,18 +37,7 @@ public class TrayAppContext : ApplicationContext
     {
         var menu = new ContextMenuStrip();
 
-        // --- Group 1: ダブルクリックと同じ主操作 ---
-        var menuMonitor = new ToolStripMenuItem("キー監視・診断を開く (&M)...", null, (s, e) =>
-        {
-            ShowMonitorWindow();
-        })
-        {
-            Font = new Font(menu.Font, FontStyle.Bold)
-        };
-        menu.Items.Add(menuMonitor);
-        menu.Items.Add(new ToolStripSeparator());
-
-        // --- Group 2: 変換動作と自動起動 ---
+        // --- Group 1: 変換動作と監視 ---
         _menuEnabled = new ToolStripMenuItem("有効 (&E)", null, (s, e) =>
         {
             _settings.Enabled = !_settings.Enabled;
@@ -73,6 +62,12 @@ public class TrayAppContext : ApplicationContext
         targetMenu.DropDownItems.Add(_menuRightCtrl);
         menu.Items.Add(targetMenu);
 
+        var menuMonitor = new ToolStripMenuItem("キー監視・診断を開く (&M)...", null, (s, e) =>
+        {
+            ShowMonitorWindow();
+        });
+        menu.Items.Add(menuMonitor);
+
         _menuStartup = new ToolStripMenuItem("Windows 起動時に実行", null, (s, e) =>
         {
             var newState = !_menuStartup.Checked;
@@ -86,7 +81,7 @@ public class TrayAppContext : ApplicationContext
 
         menu.Items.Add(new ToolStripSeparator());
 
-        // --- Group 3: 設定とアプリ情報 ---
+        // --- Group 2: 設定とアプリ情報 ---
         var menuSettings = new ToolStripMenuItem("設定 (&S)...", null, (s, e) =>
         {
             ShowSettingsWindow();
