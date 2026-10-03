@@ -82,7 +82,7 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
   - **設定 (&S)...**:
     - 変換設定、スタートアップ設定、バージョン情報を管理する設定画面を表示します。
   - **Copi2Ctrl について (&A)...**:
-    - 製品名と実行中バージョン（`version.txt`）を表示します。
+    - 製品名と実行中バージョンを表示します。
   - **終了 (&X)**: アプリを終了し、キーフックを安全に解除します。
 
 ### キー監視・診断画面

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace Copi2Ctrl.UI;
 
 /// <summary>
-/// "Copi2Ctrl について" ダイアログ: 製品名と version.txt から読み込んだバージョンを表示します。
+/// "Copi2Ctrl について" ダイアログ: 製品名とバージョン情報を表示します。
 /// </summary>
 public sealed class AboutForm : Form
 {

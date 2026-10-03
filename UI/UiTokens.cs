@@ -1,5 +1,7 @@
 using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
+using Copi2Ctrl.Core;
 
 namespace Copi2Ctrl.UI;
 
@@ -44,34 +46,12 @@ public static class UiTokens
     public static Color Success => Color.FromArgb(46, 125, 50);
 
     /// <summary>
-    /// アプリに同梱された version.txt を読み込み、バージョン文字列を返します。
-    /// ファイルがない、空、または読み込めない場合は「不明 / Unknown」を返します。
+    /// アプリケーションのバージョン文字列を取得します（EXEに埋め込まれたメタデータ優先、version.txt フォールバック）。
+    /// ファイルがない、空、または読み込めない場合は fallback（デフォルト:「不明 / Unknown」）を返します。
     /// </summary>
-    public static string ReadVersion()
+    public static string ReadVersion(string fallback = "不明 / Unknown")
     {
-        try
-        {
-            // AppContext.BaseDirectory（通常ビルドおよび単一ファイル発行時共通）
-            string baseDir = AppContext.BaseDirectory;
-            if (!string.IsNullOrEmpty(baseDir))
-            {
-                string file = Path.Combine(baseDir, "version.txt");
-                if (File.Exists(file))
-                {
-                    string raw = File.ReadAllText(file).Trim();
-                    if (!string.IsNullOrEmpty(raw))
-                    {
-                        return raw;
-                    }
-                }
-            }
-
-            return "不明 / Unknown";
-        }
-        catch
-        {
-            return "不明 / Unknown";
-        }
+        return AppVersionProvider.GetVersion(fallback);
     }
 
     /// <summary>
